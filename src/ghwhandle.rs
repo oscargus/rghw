@@ -1,8 +1,9 @@
+use core::fmt;
 use std::ffi::{CStr, CString};
 
 use crate::{
     ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_handler, ghw_hie, ghw_open,
-    ghw_read_base,
+    ghw_read_base, ghw_read_section,
 };
 
 pub struct GHWHandle {
@@ -88,6 +89,26 @@ impl GHWHandle {
             (*self.handle.as_mut_ptr()).flag_full_names = full_names as i32;
         }
     }
+
+    pub fn read_section(&mut self) -> GHWSection {
+        unsafe { ghw_read_section(self.handle.as_mut_ptr()).into() }
+    }
+
+    pub fn number_of_signals(&mut self) -> u32 {
+        unsafe { (*self.handle.as_mut_ptr()).nbr_sigs }
+    }
+
+    pub fn number_of_strings(&mut self) -> u32 {
+        unsafe { (*self.handle.as_mut_ptr()).nbr_str }
+    }
+
+    pub fn number_of_types(&mut self) -> u32 {
+        unsafe { (*self.handle.as_mut_ptr()).nbr_types }
+    }
+
+    pub fn next_time(&mut self) -> i64 {
+        unsafe { (*self.handle.as_mut_ptr()).snap_time }
+    }
 }
 
 #[derive(Debug)]
@@ -141,13 +162,36 @@ pub enum GHWHierarchyKind {
     Package,
     Process,
     Generic,
-    EOS,
+    EndOfSection,
     Signal,
     PortIn,
     PortOut,
     PortInOut,
     PortBuffer,
     PortLinkage,
+}
+
+impl fmt::Display for GHWHierarchyKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            GHWHierarchyKind::EOH => write!(f, "eoh"),
+            GHWHierarchyKind::Design => write!(f, "design"),
+            GHWHierarchyKind::Block => write!(f, "block"),
+            GHWHierarchyKind::GenerateIf => write!(f, "generate-if"),
+            GHWHierarchyKind::GenerateFor => write!(f, "generate-for"),
+            GHWHierarchyKind::Instance => write!(f, "instance"),
+            GHWHierarchyKind::Package => write!(f, "package"),
+            GHWHierarchyKind::Process => write!(f, "process"),
+            GHWHierarchyKind::Generic => write!(f, "generic"),
+            GHWHierarchyKind::EndOfSection => write!(f, "eos"),
+            GHWHierarchyKind::Signal => write!(f, "signal"),
+            GHWHierarchyKind::PortIn => write!(f, "port-in"),
+            GHWHierarchyKind::PortOut => write!(f, "port-out"),
+            GHWHierarchyKind::PortInOut => write!(f, "port-inout"),
+            GHWHierarchyKind::PortBuffer => write!(f, "port-buffer"),
+            GHWHierarchyKind::PortLinkage => write!(f, "port-linkage"),
+        }
+    }
 }
 
 impl From<i32> for GHWHierarchyKind {
@@ -162,7 +206,7 @@ impl From<i32> for GHWHierarchyKind {
             7 => GHWHierarchyKind::Package,
             13 => GHWHierarchyKind::Process,
             14 => GHWHierarchyKind::Generic,
-            15 => GHWHierarchyKind::EOS,
+            15 => GHWHierarchyKind::EndOfSection,
             16 => GHWHierarchyKind::Signal,
             17 => GHWHierarchyKind::PortIn,
             18 => GHWHierarchyKind::PortOut,
@@ -178,7 +222,7 @@ pub enum GHWWellKnownType {
     Unknown,
     Boolean,
     Bit,
-    StdULogic
+    StdULogic,
 }
 
 impl From<i32> for GHWWellKnownType {
@@ -188,7 +232,38 @@ impl From<i32> for GHWWellKnownType {
             1 => GHWWellKnownType::Boolean,
             2 => GHWWellKnownType::Bit,
             3 => GHWWellKnownType::StdULogic,
-            _ => panic!("Cannot convert {} to GHWWellKnownType", value)
+            _ => panic!("Cannot convert {} to GHWWellKnownType", value),
+        }
+    }
+}
+
+pub enum GHWSection {
+    Null,
+    String,
+    Hierarchy,
+    Type,
+    WellKnownType,
+    EOH,
+    Snapshot,
+    Cycle,
+    Directory,
+    Tailer,
+}
+
+impl From<i32> for GHWSection {
+    fn from(value: i32) -> Self {
+        match value {
+            0 => GHWSection::Null,
+            1 => GHWSection::String,
+            2 => GHWSection::Hierarchy,
+            3 => GHWSection::Type,
+            4 => GHWSection::WellKnownType,
+            5 => GHWSection::EOH,
+            6 => GHWSection::Snapshot,
+            7 => GHWSection::Cycle,
+            8 => GHWSection::Directory,
+            9 => GHWSection::Tailer,
+            _ => panic!("Cannot convert {} to GHWSection", value),
         }
     }
 }
