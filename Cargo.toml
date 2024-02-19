@@ -3,8 +3,9 @@ name = "rs-ghw"
 version = "0.1.0"
 authors = ["Oscar Gustafsson <oscar.gustafsson@gmail.com>"]
 edition = "2018"
+license = "EUPL-1.2"
 description = "GHDL GHW library."
-include = ["src/*", "tests/*.rs", "build.rs", "Cargo.toml", "assets/*.c", "assets/*.h"]
+include = ["src/*.rs", "tests/*.rs", "build.rs", "Cargo.toml", "assets/*.fst"]
 categories = ["external-ffi-bindings" ]
 build = "build.rs"
 
@@ -12,5 +13,3 @@ build = "build.rs"
 
 [dependencies]
 ghw-sys = {path = "ghw-sys"}
-[build-dependencies]
-cc = "1.0"
