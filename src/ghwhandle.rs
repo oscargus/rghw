@@ -2,8 +2,8 @@ use core::fmt;
 use std::ffi::{CStr, CString};
 
 use ghw_sys::{
-    ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_handler, ghw_hie, ghw_open,
-    ghw_read_base, ghw_read_section,
+    ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_get_hie_name, ghw_handler,
+    ghw_hie, ghw_open, ghw_read_base, ghw_read_section, ghw_sig,
 };
 
 pub struct GHWHandle {
@@ -111,7 +111,7 @@ impl GHWHandle {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GHWHierarchy {
     pub handle: *mut ghw_hie,
 }
@@ -142,7 +142,8 @@ impl GHWHierarchy {
     pub fn name(&self) -> String {
         unsafe {
             let name = self.handle.as_ref().unwrap().name;
-            CStr::from_ptr(name).to_str().unwrap().to_string()
+            let c_str = CStr::from_ptr(name).to_bytes();
+            String::from_utf8_lossy(c_str).to_string()
         }
     }
 
@@ -152,6 +153,7 @@ impl GHWHierarchy {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub enum GHWHierarchyKind {
     EOH,
     Design,
@@ -266,4 +268,20 @@ impl From<i32> for GHWSection {
             _ => panic!("Cannot convert {} to GHWSection", value),
         }
     }
+}
+
+pub struct GHWSignal {
+    pub handle: *mut ghw_sig,
+}
+
+impl GHWSignal {
+    pub fn get_type(&self) {}
+}
+
+pub enum GHWValue {
+    B2(char),
+    E8(char),
+    I32(i32),
+    I64(i64),
+    Double(f64),
 }
