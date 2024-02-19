@@ -31,13 +31,17 @@ pub fn test_read_file_lib() {
     assert_eq!(children.len(), 2);
     if children[0].kind() == GHWHierarchyKind::Package {
         assert_eq!(children[0].name(), Some("standard".to_string()));
+        assert_eq!(children[0].children().len(), 0);
     } else {
+        assert_eq!(children[0].children().len(), 7);
         assert_eq!(children[0].name(), Some("adder_tb".to_string()));
     }
     if children[1].kind() == GHWHierarchyKind::Package {
         assert_eq!(children[1].name(), Some("standard".to_string()));
+        assert_eq!(children[1].children().len(), 0);
     } else {
         assert_eq!(children[1].name(), Some("adder_tb".to_string()));
+        assert_eq!(children[1].children().len(), 7);
     }
     ghw_h.close();
 }

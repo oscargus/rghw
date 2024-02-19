@@ -2,8 +2,8 @@ use core::fmt;
 use std::ffi::{CStr, CString};
 
 use ghw_sys::{
-    ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_handler,
-    ghw_hie, ghw_open, ghw_read_base, ghw_read_section, ghw_sig,
+    ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_handler, ghw_hie, ghw_open,
+    ghw_read_base, ghw_read_section, ghw_sig,
 };
 
 pub struct GHWHandle {
@@ -158,7 +158,13 @@ impl GHWHierarchy {
     pub fn children(&self) -> Vec<GHWHierarchy> {
         let mut ret: Vec<GHWHierarchy> = Vec::new();
         match self.kind() {
-            GHWHierarchyKind::Design => unsafe {
+            GHWHierarchyKind::Design
+            | GHWHierarchyKind::Block
+            | GHWHierarchyKind::GenerateFor
+            | GHWHierarchyKind::GenerateIf
+            | GHWHierarchyKind::Instance
+            | GHWHierarchyKind::Package
+            | GHWHierarchyKind::Process => unsafe {
                 let handle = self.handle.as_ref().unwrap().u.blk.child;
                 if !handle.is_null() {
                     let mut hier = GHWHierarchy { handle };
