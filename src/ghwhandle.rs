@@ -1,7 +1,7 @@
 use core::fmt;
 use std::ffi::{CStr, CString};
 
-use crate::{
+use ghw_sys::{
     ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_handler, ghw_hie, ghw_open,
     ghw_read_base, ghw_read_section,
 };

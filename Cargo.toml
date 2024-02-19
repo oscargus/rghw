@@ -1,9 +1,9 @@
 [package]
-name = "ghw-sys"
+name = "rs-ghw"
 version = "0.1.0"
 authors = ["Oscar Gustafsson <oscar.gustafsson@gmail.com>"]
 edition = "2018"
-description = "Bindings for GHDL GHW file manipulation API."
+description = "GHDL GHW library."
 include = ["src/*", "tests/*.rs", "build.rs", "Cargo.toml", "assets/*.c", "assets/*.h"]
 categories = ["external-ffi-bindings" ]
 build = "build.rs"
@@ -11,6 +11,6 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
+ghw-sys = {path = "ghw-sys"}
 [build-dependencies]
 cc = "1.0"

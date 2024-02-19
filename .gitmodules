@@ -1,0 +1,3 @@
+[submodule "ghw-sys"]
+	path = ghw-sys
+	url = https://github.com/oscargus/ghw-sys.git

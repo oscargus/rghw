@@ -1,10 +1,9 @@
 use std::ffi::CString;
 use std::path::PathBuf;
 
-use ghw_sys::ghwhandle::GHWHandle;
+use rs_ghw::ghwhandle::GHWHandle;
 use ghw_sys::{
     ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_handler, ghw_open, ghw_read_base,
-    ghw_read_section, ghw_sections,
 };
 
 fn ghw_asset(rel_path: &str) -> PathBuf {
