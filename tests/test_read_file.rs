@@ -25,7 +25,19 @@ pub fn test_read_file_lib() {
     assert_eq!(ghw_h.number_of_signals(), 6);
     assert_eq!(ghw_h.number_of_strings(), 14);
     assert_eq!(ghw_h.number_of_types(), 1);
+    assert_eq!(hierarchy.name(), None);
     assert_eq!(hierarchy.kind(), GHWHierarchyKind::Design);
-    assert_eq!(hierarchy.name(), "foo".to_string());
+    let children = hierarchy.children();
+    assert_eq!(children.len(), 2);
+    if children[0].kind() == GHWHierarchyKind::Package {
+        assert_eq!(children[0].name(), Some("standard".to_string()));
+    } else {
+        assert_eq!(children[0].name(), Some("adder_tb".to_string()));
+    }
+    if children[1].kind() == GHWHierarchyKind::Package {
+        assert_eq!(children[1].name(), Some("standard".to_string()));
+    } else {
+        assert_eq!(children[1].name(), Some("adder_tb".to_string()));
+    }
     ghw_h.close();
 }

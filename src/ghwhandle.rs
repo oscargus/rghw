@@ -2,7 +2,7 @@ use core::fmt;
 use std::ffi::{CStr, CString};
 
 use ghw_sys::{
-    ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_get_hie_name, ghw_handler,
+    ghw_close, ghw_disp_hie, ghw_disp_types, ghw_disp_values, ghw_handler,
     ghw_hie, ghw_open, ghw_read_base, ghw_read_section, ghw_sig,
 };
 
@@ -139,17 +139,44 @@ impl GHWHierarchy {
         }
     }
 
-    pub fn name(&self) -> String {
+    pub fn name(&self) -> Option<String> {
         unsafe {
             let name = self.handle.as_ref().unwrap().name;
-            let c_str = CStr::from_ptr(name).to_bytes();
-            String::from_utf8_lossy(c_str).to_string()
+            if name.is_null() {
+                None
+            } else {
+                Some(CStr::from_ptr(name).to_str().unwrap().to_string())
+            }
         }
     }
 
     pub fn kind(&self) -> GHWHierarchyKind {
         let kind = unsafe { self.handle.as_ref().unwrap().kind };
         kind.into()
+    }
+
+    pub fn children(&self) -> Vec<GHWHierarchy> {
+        let mut ret: Vec<GHWHierarchy> = Vec::new();
+        match self.kind() {
+            GHWHierarchyKind::Design => unsafe {
+                let handle = self.handle.as_ref().unwrap().u.blk.child;
+                if !handle.is_null() {
+                    let mut hier = GHWHierarchy { handle };
+                    ret.push(hier.clone());
+                    loop {
+                        let brother = hier.brother();
+                        if let Some(brother) = brother {
+                            ret.push(brother.clone());
+                            hier = brother;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            },
+            _ => panic!("Unhandled hierarchy kind: {}", self.kind()),
+        }
+        ret
     }
 }
 
