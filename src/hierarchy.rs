@@ -83,6 +83,7 @@ impl GHWHierarchy {
                 let sigs = self.handle.as_ref().unwrap().u.sig.sigs;
                 let subtype = self.handle.as_ref().unwrap().u.sig.type_;
                 let kind: GHDLRTIK = (*subtype).kind.into();
+                dbg!(kind);
             },
             _ => panic!("Unhandled hierarchy kind: {}", self.kind()),
         }
@@ -100,6 +101,22 @@ impl GHWHierarchy {
                 | GHWHierarchyKind::Instance
                 | GHWHierarchyKind::Package
                 | GHWHierarchyKind::Process => true,
+                _ => false,
+            })
+            .cloned()
+            .collect()
+    }
+
+    pub fn child_variables(&self) -> Vec<GHWHierarchy> {
+        self.children()
+            .iter()
+            .filter(|x| match x.kind() {
+                GHWHierarchyKind::Signal
+                | GHWHierarchyKind::PortBuffer
+                | GHWHierarchyKind::PortIn
+                | GHWHierarchyKind::PortInOut
+                | GHWHierarchyKind::PortLinkage
+                | GHWHierarchyKind::PortOut => true,
                 _ => false,
             })
             .cloned()
@@ -173,8 +190,3 @@ impl From<i32> for GHWHierarchyKind {
         }
     }
 }
-
-
-
-
-

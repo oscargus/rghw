@@ -29,26 +29,14 @@ pub fn test_read_file_lib() {
     assert_eq!(hierarchy.kind(), GHWHierarchyKind::Design);
     let children = hierarchy.children();
     assert_eq!(children.len(), 2);
-    if children[0].kind() == GHWHierarchyKind::Package {
-        let pack = &children[0];
-        assert_eq!(pack.name(), Some("standard".to_string()));
-        assert_eq!(pack.children().len(), 0);
-    } else {
-        let inst = &children[0];
-        assert_eq!(inst.children().len(), 7);
-        assert_eq!(inst.name(), Some("adder_tb".to_string()));
-        assert_eq!(inst.child_scopes().len(), 2);
-    }
-    if children[1].kind() == GHWHierarchyKind::Package {
-        let pack = &children[1];
-        assert_eq!(pack.name(), Some("standard".to_string()));
-        assert_eq!(pack.children().len(), 0);
-    } else {
-        let inst = &children[1];
-        assert_eq!(inst.children().len(), 7);
-        assert_eq!(inst.name(), Some("adder_tb".to_string()));
-        assert_eq!(inst.child_scopes().len(), 2);
-    }
+    let pack = &children[0];
+    assert_eq!(pack.name(), Some("standard".to_string()));
+    assert_eq!(pack.children().len(), 0);
+    let inst = &children[1];
+    assert_eq!(inst.children().len(), 7);
+    assert_eq!(inst.name(), Some("adder_tb".to_string()));
+    assert_eq!(inst.child_scopes().len(), 2);
+    assert_eq!(inst.child_variables().len(), 5);
     assert_eq!(ghw_h.next_time(), 0);
     ghw_h.close();
 }

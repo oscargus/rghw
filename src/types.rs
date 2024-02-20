@@ -43,24 +43,25 @@ impl GHWTypeCommon {
 }
 
 pub enum GHWWellKnownType {
-  Unknown,
-  Boolean,
-  Bit,
-  StdULogic,
+    Unknown,
+    Boolean,
+    Bit,
+    StdULogic,
 }
 
 impl From<i32> for GHWWellKnownType {
-  fn from(value: i32) -> Self {
-      match value {
-          0 => GHWWellKnownType::Unknown,
-          1 => GHWWellKnownType::Boolean,
-          2 => GHWWellKnownType::Bit,
-          3 => GHWWellKnownType::StdULogic,
-          _ => panic!("Cannot convert {} to GHWWellKnownType", value),
-      }
-  }
+    fn from(value: i32) -> Self {
+        match value {
+            0 => GHWWellKnownType::Unknown,
+            1 => GHWWellKnownType::Boolean,
+            2 => GHWWellKnownType::Bit,
+            3 => GHWWellKnownType::StdULogic,
+            _ => panic!("Cannot convert {} to GHWWellKnownType", value),
+        }
+    }
 }
 
+#[derive(Debug)]
 pub enum GHDLRTIK {
     Top, /* 0  */
     Library,
