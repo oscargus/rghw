@@ -3,6 +3,8 @@ use std::ffi::CStr;
 
 use ghw_sys::ghw_hie;
 
+use crate::types::GHDLRTIK;
+
 #[derive(Debug, Clone)]
 pub struct GHWHierarchy {
     pub handle: *mut ghw_hie,
@@ -72,9 +74,36 @@ impl GHWHierarchy {
                     }
                 }
             },
+            GHWHierarchyKind::Signal
+            | GHWHierarchyKind::PortBuffer
+            | GHWHierarchyKind::PortIn
+            | GHWHierarchyKind::PortInOut
+            | GHWHierarchyKind::PortLinkage
+            | GHWHierarchyKind::PortOut => unsafe {
+                let sigs = self.handle.as_ref().unwrap().u.sig.sigs;
+                let subtype = self.handle.as_ref().unwrap().u.sig.type_;
+                let kind: GHDLRTIK = (*subtype).kind.into();
+            },
             _ => panic!("Unhandled hierarchy kind: {}", self.kind()),
         }
         ret
+    }
+
+    pub fn child_scopes(&self) -> Vec<GHWHierarchy> {
+        self.children()
+            .iter()
+            .filter(|x| match x.kind() {
+                GHWHierarchyKind::Design
+                | GHWHierarchyKind::Block
+                | GHWHierarchyKind::GenerateFor
+                | GHWHierarchyKind::GenerateIf
+                | GHWHierarchyKind::Instance
+                | GHWHierarchyKind::Package
+                | GHWHierarchyKind::Process => true,
+                _ => false,
+            })
+            .cloned()
+            .collect()
     }
 }
 
@@ -144,3 +173,8 @@ impl From<i32> for GHWHierarchyKind {
         }
     }
 }
+
+
+
+
+

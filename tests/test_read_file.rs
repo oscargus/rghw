@@ -18,8 +18,8 @@ pub fn test_read_file_lib() {
     let mut ghw_h = GHWHandle::from_file(ghw_path.to_str().unwrap());
     ghw_h.set_full_names(true);
     ghw_h.read_base();
-    //ghw_h.disp_values();
-    //ghw_h.disp_types();
+    ghw_h.disp_values();
+    ghw_h.disp_types();
     let hierarchy = ghw_h.hierarchy();
     ghw_h.disp_hierarchy(hierarchy.clone());
     assert_eq!(ghw_h.number_of_signals(), 6);
@@ -30,18 +30,25 @@ pub fn test_read_file_lib() {
     let children = hierarchy.children();
     assert_eq!(children.len(), 2);
     if children[0].kind() == GHWHierarchyKind::Package {
-        assert_eq!(children[0].name(), Some("standard".to_string()));
-        assert_eq!(children[0].children().len(), 0);
+        let pack = &children[0];
+        assert_eq!(pack.name(), Some("standard".to_string()));
+        assert_eq!(pack.children().len(), 0);
     } else {
-        assert_eq!(children[0].children().len(), 7);
-        assert_eq!(children[0].name(), Some("adder_tb".to_string()));
+        let inst = &children[0];
+        assert_eq!(inst.children().len(), 7);
+        assert_eq!(inst.name(), Some("adder_tb".to_string()));
+        assert_eq!(inst.child_scopes().len(), 2);
     }
     if children[1].kind() == GHWHierarchyKind::Package {
-        assert_eq!(children[1].name(), Some("standard".to_string()));
-        assert_eq!(children[1].children().len(), 0);
+        let pack = &children[1];
+        assert_eq!(pack.name(), Some("standard".to_string()));
+        assert_eq!(pack.children().len(), 0);
     } else {
-        assert_eq!(children[1].name(), Some("adder_tb".to_string()));
-        assert_eq!(children[1].children().len(), 7);
+        let inst = &children[1];
+        assert_eq!(inst.children().len(), 7);
+        assert_eq!(inst.name(), Some("adder_tb".to_string()));
+        assert_eq!(inst.child_scopes().len(), 2);
     }
+    assert_eq!(ghw_h.next_time(), 0);
     ghw_h.close();
 }
