@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use rs_ghw::ghwhandle::{GHWHandle, GHWHierarchyKind};
+use rs_ghw::{handle::GHWHandle, hierarchy::GHWHierarchyKind};
 
 fn ghw_asset(rel_path: &str) -> PathBuf {
     let mut path = PathBuf::from(file!());
